@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS waiters, days;
+DROP TABLE IF EXISTS waiters, tbldays;
 
 CREATE TABLE waiters(
     waiter_id SERIAL NOT NULL PRIMARY KEY,
@@ -8,7 +8,7 @@ CREATE TABLE waiters(
 INSERT INTO waiters(username)
 VALUES('Thando'),('Johno'),('Vuyo');
 
-CREATE TABLE days(
+CREATE TABLE tbldays(
     day_id SERIAL NOT NULL PRIMARY KEY,
     day_name TEXT NOT NULL,
     waiter_id INT NOT NULL,

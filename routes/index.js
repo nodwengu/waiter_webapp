@@ -50,14 +50,14 @@ router.post('/waiters/:username', async (req, res, next) => {
   try {
     //Get values selected by user
     //Insert each value to the days table
-    //
+    //sele
 
-    res.json({
-      selected: req.body
-    })
+    // res.json({
+    //   selected: req.body
+    // })
     
     //console.log(req.params.username);
-    console.log(req.body);
+    console.log(Object.entries(req.body));
  
     res.redirect(`/waiters/${req.params.username}`)
   } 
