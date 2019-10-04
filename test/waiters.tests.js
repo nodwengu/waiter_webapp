@@ -21,7 +21,7 @@ describe('The Waiters web app', function () {
 
   it('should be able to return the length ', async () => {
       const createWaiter = CreateWaiter(pool);
-
+console.log(await createWaiter.getAllWaiters());
       let waiters = await createWaiter.getAllWaiters();
       assert.equal(3, waiters.length);
   });
