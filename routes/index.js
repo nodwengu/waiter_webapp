@@ -57,8 +57,7 @@ router.post('/waiters/:username', async (req, res, next) => {
     // })
     
     //console.log(req.params.username);
-    console.log(Object.entries(req.body));
- 
+   
     res.redirect(`/waiters/${req.params.username}`)
   } 
   catch (error) {
