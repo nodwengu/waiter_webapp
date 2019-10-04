@@ -15,13 +15,13 @@ const pool = new Pool({
 describe('The Waiters web app', function () {
 
   beforeEach(async function () {
-    pool.query("DELETE FROM waiters;");
+    // pool.query("DELETE FROM waiters;");
     pool.query("DELETE FROM tbldays;");
   });
 
   it('should be able to return the length ', async () => {
       const createWaiter = CreateWaiter(pool);
-console.log(await createWaiter.getAllWaiters());
+
       let waiters = await createWaiter.getAllWaiters();
       assert.equal(3, waiters.length);
   });
