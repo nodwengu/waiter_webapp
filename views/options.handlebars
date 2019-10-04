@@ -15,16 +15,11 @@
             <div class="row">
                <div class="col s12 m12" style="">
                   <h5 class="center" style="margin: 0% 0 0 0;">Select days you can work:</h5>
-                  <form action="/reg_numbers" method="POST">
+                  <form action="/waiters/{{username}}" method="POST">
                      <div style="display:flex; margin: 10% 0 5% 0; justify-content: space-evenly;font-size: 16px;">
                         {{#each days}}
-                        {{!-- <label>
-                           <input class="with-gap" name="townRadio" value="{{day_name}}" type="radio" />
-                           <span style="font-size: 16px;">{{day_name}}</span>
-                        </label> --}}
-
                         <label>
-                           <input type="checkbox" class="filled-in" value="{{day_name}}" />
+                           <input type="checkbox" class="filled-in" name="{{day_name}}" value="{{day_name}}" />
                            <span style="font-size: 16px;">{{day_name}}</span>
                         </label>
                         {{/each}}

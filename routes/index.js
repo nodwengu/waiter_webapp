@@ -46,5 +46,25 @@ router.get('/waiters/:username', async (req, res, next) => {
   }
 });
 
+router.post('/waiters/:username', async (req, res, next) => {
+  try {
+    //Get values selected by user
+    //Insert each value to the days table
+    //
+
+    res.json({
+      selected: req.body
+    })
+    
+    //console.log(req.params.username);
+    console.log(req.body);
+ 
+    res.redirect(`/waiters/${req.params.username}`)
+  } 
+  catch (error) {
+    next(error);
+  }
+});
+
 
 module.exports = router;

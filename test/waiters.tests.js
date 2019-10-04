@@ -16,6 +16,7 @@ describe('The Waiters web app', function () {
 
   beforeEach(async function () {
     pool.query("DELETE FROM waiters;");
+    pool.query("DELETE FROM days;");
   });
 
   it('should be able to return the length ', async () => {
