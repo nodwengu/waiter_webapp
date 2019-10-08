@@ -4,53 +4,41 @@
          {{messages}}
       </div> --}}
     <div class="card" style="margin: 4rem 0 1rem 0;">
-      {{!-- <button class="btn waves-effect waves-light right" style="margin: 2% 3% 0 0;"><a href="/reg_numbers" style="color: #fff;">Registration numbers</a>
+     
+      <button class="btn waves-effect waves-light right" style="margin: 2% 3% 0 0;"><a href="/delete" style="color: #fff;">Reset</a>
         <i class="material-icons right">send</i>
-      </button> --}}
+      </button>
+   
+      
       <div class="" style="padding: 1em 0 1.8em 0;">
         <h3 class="center" style="margin: 5% 0 0 0;">Waiter Availability App</h3>
       </div>
       <div class="card-content">
         <div class="row">
           <div class="col s12 m12" style="">
-            {{!-- <form action="/reg_number" method="POST">
-              <div class="input-field" style="display: flex; align-items: center;">
-                <span for="name" style="font-size: 16px;">Registration Number</span>
-                <input placeholder="Enter number that starts with: {{#each towns}}{{town_code}}, {{/each}}" id="name" type="text" class="validate right" name="registration"
-                  style="border: solid 1px #4EC8BA;" maxlength = "9">
-              </div>
-              <div class="right">
-                <button class="btn waves-effect waves-light" type="submit">Add</a></button>
-              </div>
-            </form> --}}
             <h4 class="center" style="margin: 0% 0 0 0;">Days:</h4>
-            {{!-- <form action="/reg_numbers" method="POST">
-              <div style="display:flex; margin: 10% 0 5% 0; justify-content: space-evenly;font-size: 16px;">
-                <label>
-                  <input class="with-gap" name="townRadio" value="All" type="radio" />
-                  <span style="font-size: 16px;">All</span>
-                </label>
-              
-              </div>
-              <div class="right">
-                <button class="btn waves-effect waves-light" type="submit">Show</a></button>
-              </div>
-            </form> --}}
-
             <div class="daysList center">
               {{#each days}}
-                <a href="">{{day_name}}</a>
+                <a class="{{availability}}">
+                  {{day_name}}
+                  <p>08</p>
+                </a>
               {{/each}}
             </div>
+            <div class="right" style="margin: 5% 3% 0 0;">
+                <span class="list enough" style="padding: 0px 12px 0 1em;margin-left:5px;"></span>Enough Waiters
+                <span class="list extra" style="padding: 0px 12px 0 1em;margin-left:5px;"></span>Extra Waiters
+               <span class="list less" style="padding: 0px 12px 0 1em;margin-left:5px;"></span>Less Waiters
+              </div>
 
             <div>
-              <h4 class="center" style="margin: 3% 0 2% 0;">Waiters List:</h4>
+              <h4 class="center" style="margin: 15% 0 2% 0;">Waiters List:</h4>
               <table class="highlight" style="    border: solid 1px #DCDBDC;">
                 <thead>
                   <tr>
                     <th style="font-size: 1.4em;">Username</th>
-                    <th style="font-size: 1.4em;">Days</th>
-                    <th style="font-size: 1.4em;">Actions</th>
+                    <th style="font-size: 1.4em;" class="center">Days</th>
+                    <th style="font-size: 1.4em;" class="center">Actions</th>
                   </tr>
                 </thead>
 
@@ -58,10 +46,14 @@
                   {{#each waiters}}
                   <tr>
                     <td class=""> <a href="/waiters/{{username}}">{{username}}</a></td>
-                    <td>Test</td>
-                    <td>
-                      {{!-- <a href="/reg_numbers/edit/{{reg_number}}" class="waves-effect waves-light btn"><i
-                          class="material-icons left">edit</i>Edit</a> --}}
+                    <td class="waiterDays">
+                       {{#each ../waiterDays}}
+                         <span class="list">{{day_name}}</span>
+                       {{/each}}
+                    </td>
+                    <td class="center">
+                      <a href="/reg_numbers/edit/{{reg_number}}" class="waves-effect waves-light btn"><i
+                          class="material-icons left">edit</i>Edit</a>
                       <a href="/waiters/delete/{{username}}" class="waves-effect #f44336 red btn"><i
                           class="material-icons left">delete</i>Delete</a>
                     </td>
@@ -70,10 +62,16 @@
                 </tbody>
               </table>
             </div>
-  
+  {{#each tests}}
+                         <span class="list">{{day_name}}</span>
+                       {{/each}}
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+                  {{#each waiters}}
+                
+                  {{/each}}

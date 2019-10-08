@@ -28,9 +28,9 @@ app.use(flash());
 app.use(express.static('public'));
 
 app.use('/', router);
+app.use('/days', router);
 app.use('/waiters/:username', router);
-// app.use('/reg_number/:reg_number/', router);
-// app.use('/reg_numbers/delete/:reg_number/', router);
+app.use('/delete', router);
 
 //Define error-handling middleware functions
 app.use(function (err, req, res, next) {
