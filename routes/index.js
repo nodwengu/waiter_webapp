@@ -22,25 +22,28 @@ const createWaiter = CreateWaiter(pool);
 router.get('/', async (req, res, next) => {
    try {
       let daysList = await createWaiter.getAllDays();
+      createWaiter.updateCurrentDate();
+
       res.render('index', {
          days: daysList,
          waiters: await createWaiter.getAllWaiters(),
-         waiterDays: await createWaiter.getDaysByName('Thando'),
-         tester1: await createWaiter.tester1()
+         messages: req.flash('info')
       });
-console.log(await createWaiter.tester1());
 
    } catch (error) {
       next(error);
    }
 });
 
-
 router.get('/waiters/:username', async (req, res, next) => {
    try {
+      let username = req.params.username;
       res.render('options', {
-         username: req.params.username,
+         username,
          days: await createWaiter.getAllDays(),
+         waiters: await createWaiter.getAllWaiters(),
+         waiterDays: await createWaiter.getDaysByName(username),
+         messages: req.flash('info')
       })
 
    } catch (error) {
@@ -52,27 +55,34 @@ router.post('/waiters/:username', async (req, res, next) => {
    try {
       let username = req.params.username;
       let days = await createWaiter.getAllDays();
+      let waiterDays = await createWaiter.getDaysByName(username);
       let waiterSelections;
+      
       if(typeof req.body.days === 'string') {
          waiterSelections = [req.body.days];
       } else {
          waiterSelections = req.body.days;
       }
-      console.log(await createWaiter.getDaysByName(username));
-//console.log(createWaiter.tester());
 
       if(waiterSelections !== undefined) {
-         for (let day of days) {
-            for (let selection of waiterSelections) {
-               if (day.day_name === selection) {
-                  await createWaiter.updateDayCounter({ day_name: day.day_name });
-                  await createWaiter.setWaiterDays({ username, day_name: selection });
-                  await createWaiter.setColor(day.day_name)
+         if(waiterSelections.length >= 5) {
+            req.flash('info', 'MORE THAN FIVE');
+            console.log("NEED TO SELECT FIVE");
+            //return;
+         } else {
+            for (let day of days) {
+               for (let selection of waiterSelections) {
+                  if (day.day_name === selection) {
+                     await createWaiter.updateDayCounter({ day_name: day.day_name });
+                     await createWaiter.setWaiterDays({ username, day_name: selection });
+                     await createWaiter.setColor(day.day_name)
+                  }
                }
             }
          }
       } else {
          //FLASH MESSAGE WILL GO HERE
+         req.flash('info', 'Input needed!!!');
          console.log("Input needed!!!");
       }
 
@@ -95,6 +105,5 @@ router.get('/delete', async (req, res, next) => {
    }
 
 });
-
 
 module.exports = router;

@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS waiters, weekDays, waiterDays;
+DROP TABLE IF EXISTS waiters, weekdays, waiterdays;
 
 CREATE TABLE waiters(
     waiter_id SERIAL NOT NULL,
@@ -22,5 +22,5 @@ CREATE TABLE waiterdays(
 );
 
 INSERT INTO waiters(username) VALUES('Thando'),('Johno'),('Vuyo'),('Mark'),('James');
-INSERT INTO weekdays(day_name, curr_day) VALUES('Monday', 0),('Tuesday', 1),('Wednesday', 2),('Thursday', 3),('Friday', 4),('Saturday', 5),('Sunday', 6);
+INSERT INTO weekdays(day_name, curr_day) VALUES('Sunday', 0),('Monday', 1),('Tuesday', 2),('Wednesday', 3),('Thursday', 4),('Friday', 5),('Saturday', 6);
 

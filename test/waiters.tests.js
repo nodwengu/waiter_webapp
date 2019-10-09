@@ -1,4 +1,3 @@
-
 const assert = require('assert');
 
 const CreateWaiter = require('../createWaiter');
@@ -15,8 +14,7 @@ const pool = new Pool({
 describe('The Waiters web app', function () {
 
   beforeEach(async function () {
-    // pool.query("DELETE FROM waiters;");
-    pool.query("DELETE FROM waiterDays;");
+    pool.query("DELETE FROM waiterdays;");
     pool.query(`UPDATE weekdays SET days_counter = 0, availability = 'less'`)
   });
 
@@ -26,7 +24,6 @@ describe('The Waiters web app', function () {
     let days = await createWaiter.getAllDays();
 
     assert.equal(7, days.length);
-    // assert.deepEqual(results, await createWaiter.getAllDays());
   });
 
   it('should be able to return a list of waiters from waiters table', async () => {
@@ -108,7 +105,6 @@ describe('The Waiters web app', function () {
       { day_name: 'Saturday',days_counter: 0,availability: 'less',curr_day: 5 },
       { day_name: 'Sunday',days_counter: 0,availability: 'less',curr_day: 6 } 
     ]
-
     assert.deepEqual(results, await createWaiter.getAllDays());
   });
 

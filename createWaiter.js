@@ -1,5 +1,6 @@
 module.exports = function CreateWaiter(pool) {
    let color = '';
+   let waiterCounter = 0;
 
    async function getAllDays() {
       let query = `SELECT * FROM weekdays ORDER BY curr_day`;
@@ -50,29 +51,6 @@ module.exports = function CreateWaiter(pool) {
       return results.rows;
    }
 
-   async function getWaiterDaysByName() {
-      let waiterDays = await getAllWaiters();
-      let userDays = [];
-      for(let day of waiterDays) {
-         // if (day) {
-
-         // }
-
-         userDays = await getDaysByName(day.username);
-      }
-      
-      return userDays;
-   }
-
-   async function tester1() {
-      let results = await getAllWaiters();
-      let newResult;
-      for (let result of results) {
-         newResult = await getDaysByName(result.username)
-      }
-      return newResult
-   }
-
    async function setColor(theDay) {
       let days = await getAllDays();
       let color = '';
@@ -109,18 +87,23 @@ module.exports = function CreateWaiter(pool) {
       return await pool.query(query);
    }
 
+   async function setDates(newDate, dayName) {
+      let query = `UPDATE weekdays SET curr_date = ${newDate} WHERE day_name = '${dayName}'`;
+      return await pool.query(query);
+   }
 
-   function tester() {
-      // let day_names = ["Sunday","Monday", "Tuesday", "Wednesday", 
-      // "Thursday", "Friday", "Saturday"];
+   async function updateCurrentDate() {
+      let daysList = await getAllDays();
 
-      let myDate = new Date();
-      myDate.setDate(myDate.getDate() + 2);
-      let curr_date = myDate.getDate();
-      //let curr_day  = myDate.getDay();
-
-      //console.log(day_names[curr_day] + " " + curr_date);
-      console.log(curr_date);
+      for(let day of daysList) {
+         let myDate = new Date();
+         myDate.setDate( myDate.getDate() + (  day.curr_day - myDate.getDay() ) );
+         let curr_date = myDate.getDate();
+         
+         // console.log(`Date: ${curr_date}`);
+         await setDates(curr_date, day.day_name);
+         
+      }
    }
 
 
@@ -137,10 +120,8 @@ module.exports = function CreateWaiter(pool) {
       getColor,
       deleteWaiterDays,
       resetAll,
-      getWaiterDaysByName,
       getDaysByName,
-
-      tester,
-      tester1
+      setDates,
+      updateCurrentDate,
    }
 }
