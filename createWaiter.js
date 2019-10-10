@@ -46,7 +46,7 @@ module.exports = function CreateWaiter(pool) {
    }
 
    async function getDaysByName(username) {
-      let query = `SELECT day_name FROM waiterdays WHERE username = '${username}'`;
+      let query = `SELECT day_name FROM waiterdays WHERE username = '${username}' `;
       let results = await pool.query(query);
       return results.rows;
    }
@@ -100,10 +100,30 @@ module.exports = function CreateWaiter(pool) {
          myDate.setDate( myDate.getDate() + (  day.curr_day - myDate.getDay() ) );
          let curr_date = myDate.getDate();
          
-         // console.log(`Date: ${curr_date}`);
+         //console.log(`Date: ${curr_date}`);
          await setDates(curr_date, day.day_name);
          
       }
+   }
+
+   async function isDayRepeated(name, theDay) {
+      let isRepeated = false;
+      let userDays = await getDaysByName(name)
+ 
+      for(let day of userDays) {
+         if(day.day_name === theDay) {
+            isRepeated = true;
+            break;
+         }
+      }
+      return isRepeated;
+   }
+
+   async function getAllByDay(dayName) {
+      let query = `SELECT username FROM waiterdays WHERE day_name = '${dayName}'`;
+      let results = await pool.query(query);
+
+      return results.rows;
    }
 
 
@@ -123,5 +143,7 @@ module.exports = function CreateWaiter(pool) {
       getDaysByName,
       setDates,
       updateCurrentDate,
+      isDayRepeated,
+      getAllByDay
    }
 }

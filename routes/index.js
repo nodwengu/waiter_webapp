@@ -23,16 +23,29 @@ router.get('/', async (req, res, next) => {
    try {
       let daysList = await createWaiter.getAllDays();
       createWaiter.updateCurrentDate();
-
       res.render('index', {
          days: daysList,
-         waiters: await createWaiter.getAllWaiters(),
          messages: req.flash('info')
       });
 
    } catch (error) {
       next(error);
    }
+});
+
+router.get('/day/:day_name', async (req, res, next) => {
+   res.render('day',{
+      day: req.params.day_name,
+      waiterDays: await createWaiter.getAllByDay(req.params.day_name),
+   });
+
+   console.log(await createWaiter.getAllByDay(req.params.day_name))
+});
+
+router.get('/waiters', async (req, res, next) => {
+   res.render('waiters', {
+      waiters: await createWaiter.getAllWaiters(),
+   });
 });
 
 router.get('/waiters/:username', async (req, res, next) => {
@@ -57,31 +70,37 @@ router.post('/waiters/:username', async (req, res, next) => {
       let days = await createWaiter.getAllDays();
       let waiterDays = await createWaiter.getDaysByName(username);
       let waiterSelections;
-      
+
       if(typeof req.body.days === 'string') {
          waiterSelections = [req.body.days];
       } else {
          waiterSelections = req.body.days;
       }
-
+      
       if(waiterSelections !== undefined) {
-         if(waiterSelections.length >= 5) {
-            req.flash('info', 'MORE THAN FIVE');
-            console.log("NEED TO SELECT FIVE");
-            //return;
+         if(waiterSelections.length > 7 || waiterDays.length > 7) {
+            req.flash('info', 'MORE THAN 7 days');
          } else {
+            //let exit_loops = false;
             for (let day of days) {
                for (let selection of waiterSelections) {
-                  if (day.day_name === selection) {
-                     await createWaiter.updateDayCounter({ day_name: day.day_name });
-                     await createWaiter.setWaiterDays({ username, day_name: selection });
-                     await createWaiter.setColor(day.day_name)
-                  }
+                  let isRepeated = await createWaiter.isDayRepeated(username, selection)    
+                  if(!isRepeated) {
+                     if (day.day_name === selection) {
+                        await createWaiter.updateDayCounter({ day_name: day.day_name });
+                        await createWaiter.setWaiterDays({ username, day_name: selection });
+                        await createWaiter.setColor(day.day_name)
+                     }
+                  } 
+                  // else {
+                  //    exit_loops = true;
+                  //    break;
+                  // }
                }
+               //if (exit_loops){ break; }
             }
          }
       } else {
-         //FLASH MESSAGE WILL GO HERE
          req.flash('info', 'Input needed!!!');
          console.log("Input needed!!!");
       }

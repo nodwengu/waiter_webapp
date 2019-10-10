@@ -14,8 +14,8 @@ const pool = new Pool({
 describe('The Waiters web app', function () {
 
   beforeEach(async function () {
-    pool.query("DELETE FROM waiterdays;");
-    pool.query(`UPDATE weekdays SET days_counter = 0, availability = 'less'`)
+    //pool.query("DELETE FROM waiterdays;");
+    pool.query(`UPDATE weekdays SET days_counter = 0, avail_status = 'less'`)
   });
 
   it('should be able to return a list of week days from weekdays table', async () => {
@@ -57,13 +57,13 @@ describe('The Waiters web app', function () {
     const createWaiter = CreateWaiter(pool);
 
     let results = [ 
-      { day_name: 'Monday',days_counter: 0,availability: 'less',curr_day: 0 },
-      { day_name: 'Tuesday',days_counter: 0,availability: 'less',curr_day: 1 },
-      { day_name: 'Wednesday',days_counter: 0,availability: 'less',curr_day: 2 },
-      { day_name: 'Thursday',days_counter: 0,availability: 'less',curr_day: 3 },
-      { day_name: 'Friday',days_counter: 0,availability: 'less',curr_day: 4 },
-      { day_name: 'Saturday',days_counter: 0,availability: 'less',curr_day: 5 },
-      { day_name: 'Sunday',days_counter: 0,availability: 'less',curr_day: 6 } 
+      { day_name: 'Monday',days_counter: 0,avail_status: 'less',curr_day: 0 },
+      { day_name: 'Tuesday',days_counter: 0,avail_status: 'less',curr_day: 1 },
+      { day_name: 'Wednesday',days_counter: 0,avail_status: 'less',curr_day: 2 },
+      { day_name: 'Thursday',days_counter: 0,avail_status: 'less',curr_day: 3 },
+      { day_name: 'Friday',days_counter: 0,avail_status: 'less',curr_day: 4 },
+      { day_name: 'Saturday',days_counter: 0,avail_status: 'less',curr_day: 5 },
+      { day_name: 'Sunday',days_counter: 0,avail_status: 'less',curr_day: 6 } 
     ]
      
     assert.deepEqual(results, await createWaiter.getAllDays());
@@ -71,13 +71,13 @@ describe('The Waiters web app', function () {
     await createWaiter.updateDayCounter({day_name: 'Monday'});
 
     let newResults = [ 
-      { day_name: 'Monday',days_counter: 1,availability: 'less',curr_day: 0 },
-      { day_name: 'Tuesday',days_counter: 0,availability: 'less',curr_day: 1 },
-      { day_name: 'Wednesday',days_counter: 0,availability: 'less',curr_day: 2 },
-      { day_name: 'Thursday',days_counter: 0,availability: 'less',curr_day: 3 },
-      { day_name: 'Friday',days_counter: 0,availability: 'less',curr_day: 4 },
-      { day_name: 'Saturday',days_counter: 0,availability: 'less',curr_day: 5 },
-      { day_name: 'Sunday',days_counter: 0,availability: 'less',curr_day: 6 } 
+      { day_name: 'Monday',days_counter: 1,avail_status: 'less',curr_day: 0 },
+      { day_name: 'Tuesday',days_counter: 0,avail_status: 'less',curr_day: 1 },
+      { day_name: 'Wednesday',days_counter: 0,avail_status: 'less',curr_day: 2 },
+      { day_name: 'Thursday',days_counter: 0,avail_status: 'less',curr_day: 3 },
+      { day_name: 'Friday',days_counter: 0,avail_status: 'less',curr_day: 4 },
+      { day_name: 'Saturday',days_counter: 0,avail_status: 'less',curr_day: 5 },
+      { day_name: 'Sunday',days_counter: 0,avail_status: 'less',curr_day: 6 } 
     ]
     
     assert.deepEqual(newResults, await createWaiter.getAllDays());
@@ -97,16 +97,25 @@ describe('The Waiters web app', function () {
     createWaiter.resetAll();
 
     let results = [ 
-      { day_name: 'Monday',days_counter: 0,availability: 'less',curr_day: 0 },
-      { day_name: 'Tuesday',days_counter: 0,availability: 'less',curr_day: 1 },
-      { day_name: 'Wednesday',days_counter: 0,availability: 'less',curr_day: 2 },
-      { day_name: 'Thursday',days_counter: 0,availability: 'less',curr_day: 3 },
-      { day_name: 'Friday',days_counter: 0,availability: 'less',curr_day: 4 },
-      { day_name: 'Saturday',days_counter: 0,availability: 'less',curr_day: 5 },
-      { day_name: 'Sunday',days_counter: 0,availability: 'less',curr_day: 6 } 
+      { day_name: 'Monday',days_counter: 0,avail_status: 'less',curr_day: 0 },
+      { day_name: 'Tuesday',days_counter: 0,avail_status: 'less',curr_day: 1 },
+      { day_name: 'Wednesday',days_counter: 0,avail_status: 'less',curr_day: 2 },
+      { day_name: 'Thursday',days_counter: 0,avail_status: 'less',curr_day: 3 },
+      { day_name: 'Friday',days_counter: 0,avail_status: 'less',curr_day: 4 },
+      { day_name: 'Saturday',days_counter: 0,avail_status: 'less',curr_day: 5 },
+      { day_name: 'Sunday',days_counter: 0,avail_status: 'less',curr_day: 6 } 
     ]
     assert.deepEqual(results, await createWaiter.getAllDays());
   });
+
+  it('It should be able to return a list of waiters that work on a specific day', async () => {
+    const createWaiter = CreateWaiter(pool);
+
+    console.log(await createWaiter.getAllByDay('Monday'));
+    
+    //assert.deepEqual("w", await createWaiter.getAllByDay('Monday'));
+  });
+
 
 
   after(function () {

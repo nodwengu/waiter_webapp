@@ -28,7 +28,8 @@ app.use(flash());
 app.use(express.static('public'));
 
 app.use('/', router);
-app.use('/days', router);
+app.use('/day/:day_name', router);
+app.use('/waiters', router);
 app.use('/waiters/:username', router);
 app.use('/delete', router);
 
