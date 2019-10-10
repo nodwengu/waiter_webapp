@@ -67,7 +67,7 @@ module.exports = function CreateWaiter(pool) {
          }
       }
       let query = `UPDATE weekdays
-               SET availability = '${color}'
+               SET avail_status = '${color}'
                WHERE day_name = '${theDay}'`;
 
       return await pool.query(query);
@@ -81,9 +81,9 @@ module.exports = function CreateWaiter(pool) {
       return pool.query('DELETE FROM waiterdays;');
    }
 
-   //update counter and availability from weekday
+   //update counter and avail_status from weekday
    async function resetAll() {
-      let query = `UPDATE weekdays SET days_counter = 0, availability = 'less';`
+      let query = `UPDATE weekdays SET days_counter = 0, avail_status = 'less';`
       return await pool.query(query);
    }
 
