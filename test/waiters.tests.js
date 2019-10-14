@@ -55,19 +55,6 @@ describe('The Waiters web app', function () {
 
   it('should be able to update day counter on week day table ', async () => {
     const createWaiter = CreateWaiter(pool);
-    //console.log(await createWaiter.getAllDays())
-
-    let results = [ 
-      { day_name: 'Monday',days_counter: 0,avail_status: 'less',curr_day: 0, curr_date: 0 },
-      { day_name: 'Tuesday',days_counter: 0,avail_status: 'less',curr_day: 1, curr_date: 0 },
-      { day_name: 'Wednesday',days_counter: 0,avail_status: 'less',curr_day: 2, curr_date: 0 },
-      { day_name: 'Thursday',days_counter: 0,avail_status: 'less',curr_day: 3, curr_date: 0 },
-      { day_name: 'Friday',days_counter: 0,avail_status: 'less',curr_day: 4, curr_date: 0 },
-      { day_name: 'Saturday',days_counter: 0,avail_status: 'less',curr_day: 5, curr_date: 0 },
-      { day_name: 'Sunday',days_counter: 0,avail_status: 'less',curr_day: 6, curr_date: 0 } 
-    ]
-     
-    assert.deepEqual(results, await createWaiter.getAllDays());
 
     await createWaiter.updateDayCounter({day_name: 'Monday'});
 
