@@ -111,6 +111,7 @@ describe('The Waiters web app', function () {
 
 
   after(function () {
+    //pool.query("DELETE FROM waiterdays;");
     pool.end();
   })
 });
