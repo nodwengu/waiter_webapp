@@ -1,6 +1,5 @@
 module.exports = function CreateWaiter(pool) {
    let color = '';
-   let waiterCounter = 0;
 
    async function getAllDays() {
       let query = `SELECT * FROM weekdays ORDER BY curr_day`;
@@ -46,8 +45,9 @@ module.exports = function CreateWaiter(pool) {
    }
 
    async function getDaysByName(username) {
-      let query = `SELECT day_name FROM waiterdays WHERE username = '${username}' `;
+      let query = `SELECT * FROM waiterdays WHERE username = '${username}' `;
       let results = await pool.query(query);
+
       return results.rows;
    }
 
@@ -102,7 +102,6 @@ module.exports = function CreateWaiter(pool) {
          
          //console.log(`Date: ${curr_date}`);
          await setDates(curr_date, day.day_name);
-         
       }
    }
 
@@ -119,14 +118,41 @@ module.exports = function CreateWaiter(pool) {
       return isRepeated;
    }
 
+   //Returns all waiters that are working on a specific day
    async function getAllByDay(dayName) {
-      let query = `SELECT username FROM waiterdays WHERE day_name = '${dayName}'`;
+      let query = `SELECT * FROM waiterdays WHERE day_name = '${dayName}'`;
       let results = await pool.query(query);
 
       return results.rows;
    }
 
+   //Returns all waiters that are NOT working on a selected day
+   async function getAllAvailableWaiters(theDay) {
+      let query = `SELECT username FROM waiters
+                  EXCEPT 
+                     SELECT username FROM waiterdays
+                     WHERE day_name = '${theDay}' `;
+      let results = await pool.query(query);
 
+      return results.rows;
+   }
+
+   //Remove a waiter from a particular day
+   async function removeFromDay(theDay, theName) {
+      let query = `DELETE FROM waiterdays
+         WHERE username = '${theName}' AND day_name = '${theDay}'`;
+
+      return await pool.query(query);
+   }
+
+   async function reduceDayCounter(day) {
+      let query = `UPDATE weekdays
+                  SET days_counter = days_counter - 1
+                  WHERE day_name = '${day.day_name}'`;
+
+      return await pool.query(query);
+   }
+   
    return {
       getAllDays,
       getAllWaiters,
@@ -144,6 +170,11 @@ module.exports = function CreateWaiter(pool) {
       setDates,
       updateCurrentDate,
       isDayRepeated,
-      getAllByDay
+      getAllByDay,
+      getAllAvailableWaiters,
+      removeFromDay,
+      reduceDayCounter
+
+      // getDaysByDayName,
    }
 }

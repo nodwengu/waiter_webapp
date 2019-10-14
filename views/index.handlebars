@@ -18,10 +18,10 @@
             <h4 class="center" style="margin: 0% 0 0 0;">Days:</h4>
             <div class="daysList center">
               {{#each days}}
-              <a href="/day/{{day_name}}" class="{{availability}}">
+              <a href="/day/{{day_name}}" class="{{avail_status}}">
                 {{day_name}}
                 <p>{{curr_date}}</p>
-                <hr style="color: #C0C0C0 ">
+                {{!-- <hr style="color: #C0C0C0 "> --}}
                 <br />
                 <div>Waiters: {{days_counter}}</div>
                 <br />

@@ -1,23 +1,18 @@
 <div class="row">
    <div class="col s12 m12">
       <div class="card" style="margin: 4rem 0 1rem 0;">
-        <button class="btn waves-effect waves-light right btn-flat" style="margin: 3% 3% 3% 0;"><a href="/"
-            style="color: #000;">Home</a>
-        <i class="material-icons left">home</i>
-         </button>
          <button class="btn waves-effect waves-light right btn-flat" style="margin: 3% 3% 3% 0;"><a href="/"
-               style="color: #000;">Add New</a>
-            <i class="material-icons left">plus</i>
+               style="color: #000;">Home</a>
+            <i class="material-icons left">home</i>
          </button>
-         
-        
+
          <div class="card-content">
             <div class="row">
                <div class="col s12 m12" style="">
 
                   <div>
                      <h4 class="center" style="margin: 3% 0 2% 0;">{{day}}</h4>
-                     <table class="highlight" style="    border: solid 1px #DCDBDC;">
+                     <table class="highlight" style="border: solid 1px #DCDBDC;">
                         <thead>
                            <tr>
                               <th style="font-size: 1.4em;">Username</th>
@@ -29,11 +24,54 @@
                            {{#each waiterDays}}
                            <tr>
                               <td class=""> <a href="#">{{username}}</a></td>
-                              <td class=""> <a href="#">wesd</a></td>
+                              <td class="">
+                                 <a href="/day/{{day_name}}/delete/{{username}}" class="waves-effect #f44336 red btn"><i
+                                       class="material-icons left">delete</i>Remove</a>
+                              </td>
                            </tr>
                            {{/each}}
                         </tbody>
                      </table>
+                  </div>
+
+                  <div>
+                     <ul class="collapsible">
+                        <li>
+                           <div class="collapsible-header">
+                              <button class="btn waves-effect waves-light right btn-flat"><a style="color: #000;">Add
+                                    New</a>
+                                 <i class="material-icons left">add</i>
+                              </button>
+                           </div>
+                           <div class="collapsible-body">
+                              <div>
+                                 <h4 class="center">Available Waiters:</h4>
+                                 <table class="highlight" style="    border: solid 1px #DCDBDC;">
+                                    <thead>
+                                       <tr>
+                                          <th style="font-size: 1.4em;">Username</th>
+                                          <th style="font-size: 1.4em;">Actions</th>
+                                       </tr>
+                                    </thead>
+
+                                    <tbody>
+                                       {{#each available}}
+                                       <tr>
+                                          <td class=""> <a href="#">{{username}}</a></td>
+                                          <td class="">
+                                             <a href="/waiters/{{username}}" class="waves-effect waves-light btn">
+                                                <i class="material-icons left">add</i>Add</a>
+                                          </td>
+                                       </tr>
+                                       {{/each}}
+                                    </tbody>
+                                 </table>
+                              </div>
+                           </div>
+                        </li>
+
+                     </ul>
+
                   </div>
                </div>
             </div>

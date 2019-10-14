@@ -31,14 +31,13 @@ app.use('/', router);
 app.use('/day/:day_name', router);
 app.use('/waiters', router);
 app.use('/waiters/:username', router);
-app.use('/delete', router);
+app.use('/day/:day_name/delete/:username', router);
 
 //Define error-handling middleware functions
 app.use(function (err, req, res, next) {
    res.status(500);
    res.render('error', { error: err });
 })
-
 
 const PORT = process.env.PORT || 5001;
 

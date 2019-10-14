@@ -37,15 +37,36 @@ router.get('/day/:day_name', async (req, res, next) => {
    res.render('day',{
       day: req.params.day_name,
       waiterDays: await createWaiter.getAllByDay(req.params.day_name),
+      available: await createWaiter.getAllAvailableWaiters(req.params.day_name),
+      messages: req.flash('info')
    });
+});
 
-   console.log(await createWaiter.getAllByDay(req.params.day_name))
+router.get('/day/:day_name/delete/:username', async (req, res, next) => {
+   try {
+      let day = req.params.day_name;
+      let name = req.params.username;
+
+      await createWaiter.removeFromDay(day, name);
+      await createWaiter.reduceDayCounter({ day_name: day });
+      await createWaiter.setColor(day)
+
+      res.redirect(`/day/${day}`)
+
+   } catch(error) {
+      next(error)
+   }
 });
 
 router.get('/waiters', async (req, res, next) => {
-   res.render('waiters', {
-      waiters: await createWaiter.getAllWaiters(),
-   });
+   try {
+      res.render('waiters', {
+         waiters: await createWaiter.getAllWaiters(),
+      });
+   } 
+   catch(error) {
+      next(error);
+   }
 });
 
 router.get('/waiters/:username', async (req, res, next) => {
@@ -81,28 +102,28 @@ router.post('/waiters/:username', async (req, res, next) => {
          if(waiterSelections.length > 7 || waiterDays.length > 7) {
             req.flash('info', 'MORE THAN 7 days');
          } else {
-            //let exit_loops = false;
+            let exit_loops = false;
             for (let day of days) {
                for (let selection of waiterSelections) {
                   let isRepeated = await createWaiter.isDayRepeated(username, selection)    
                   if(!isRepeated) {
                      if (day.day_name === selection) {
-                        await createWaiter.updateDayCounter({ day_name: day.day_name });
-                        await createWaiter.setWaiterDays({ username, day_name: selection });
-                        await createWaiter.setColor(day.day_name)
+                        if(day.days_counter < 3) { //Prevent from adding more than 3 waiters
+                           await createWaiter.updateDayCounter({ day_name: day.day_name });
+                           await createWaiter.setWaiterDays({ username, day_name: selection });
+                           await createWaiter.setColor(day.day_name)
+                        } else {   
+                           exit_loops = true;
+                           req.flash('info', `${day.day_name} has enough waiters...`);
+                        }
                      }
-                  } 
-                  // else {
-                  //    exit_loops = true;
-                  //    break;
-                  // }
+                  }      
                }
-               //if (exit_loops){ break; }
+               if (exit_loops){ break; }
             }
          }
       } else {
-         req.flash('info', 'Input needed!!!');
-         console.log("Input needed!!!");
+         req.flash('info', 'Please select at least one day from the list');
       }
 
       res.redirect(`/waiters/${req.params.username}`)
