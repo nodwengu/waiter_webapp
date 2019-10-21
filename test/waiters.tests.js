@@ -87,13 +87,6 @@ describe('The Waiters web app', function () {
     assert.deepEqual(newResults, await createWaiter.getAllDays());
   });
 
-  it('should be able to return day counter for a specific day', async () => {
-    const createWaiter = CreateWaiter(pool);
-
-    assert.deepEqual({ days_counter: 1 }, await createWaiter.getCounterByDayName('Monday'));
-    assert.deepEqual({ days_counter: 0 }, await createWaiter.getCounterByDayName('Friday'));
-    assert.deepEqual({ days_counter: 0 }, await createWaiter.getCounterByDayName('Sunday'));
-  });
 
   it('should be able to reset availability status and counter to their default values', async () => {
     const createWaiter = CreateWaiter(pool);
