@@ -30,6 +30,7 @@ describe('The Waiters web app', function () {
     const createWaiter = CreateWaiter(pool);
 
     let waiters = await createWaiter.getAllWaiters();
+    console.log(waiters);
     
     let results = [ 
       { waiter_id: 6,username: 'Thando',usertype: 'admin',password: '123456' },
