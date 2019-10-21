@@ -30,14 +30,17 @@ describe('The Waiters web app', function () {
     const createWaiter = CreateWaiter(pool);
 
     let waiters = await createWaiter.getAllWaiters();
+    
     let results = [ 
-      { waiter_id: 1, username: 'Thando' },
-      { waiter_id: 2, username: 'Johno' },
-      { waiter_id: 3, username: 'Vuyo' },
-      { waiter_id: 4, username: 'Mark' },
-      { waiter_id: 5, username: 'James' } ]
-  
-    assert.equal(5, waiters.length);
+      { waiter_id: 6,username: 'Thando',usertype: 'admin',password: '123456' },
+      { waiter_id: 7,username: 'Johno',usertype: 'waiter',password: '123456' },
+      { waiter_id: 8,username: 'Vuyo',usertype: 'waiter',password: '123456' },
+      { waiter_id: 9,username: 'Mark',usertype: 'waiter',password: '123456' },
+      { waiter_id: 10,username: 'James',usertype: 'waiter',password: '123456' },
+      { waiter_id: 11,username: 'Admin',usertype: 'admin',password: '123456' } 
+    ]
+    
+    assert.equal(6, waiters.length);
     assert.deepEqual(results, await createWaiter.getAllWaiters());
   });
 
