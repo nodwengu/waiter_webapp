@@ -23,9 +23,7 @@ CREATE TABLE waiterdays(
     FOREIGN KEY (username) REFERENCES waiters(username),
     FOREIGN KEY (day_name) REFERENCES weekDays(day_name)
 );
-INSERT INTO waiters(username, userType) VALUES('Thando', 'admin'),('Johno', 'waiter'),('Vuyo', 'waiter'),('Mark', 'waiter'),('James', 'waiter'),('Admin', 'admin');
-
--- INSERT INTO waiters(username) VALUES('Thando'),('Johno'),('Vuyo'),('Mark'),('James');
+INSERT INTO waiters(username,password, userType) VALUES('Thando',123456, 'admin'),('Johno', 123456, 'waiter'),('Vuyo', 123456, 'waiter'),('Mark', 123456, 'waiter'),('James', 123456, 'waiter'),('Admin', 123456, 'admin');
 INSERT INTO weekdays(day_name, curr_day) VALUES('Sunday', 0),('Monday', 1),('Tuesday', 2),('Wednesday', 3),('Thursday', 4),('Friday', 5),('Saturday', 6);
 INSERT INTO waiterdays(username, day_name) VALUES('Thando','Sunday'),('Vuyo','Monday'),('Thando','Monday');
 
