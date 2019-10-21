@@ -192,11 +192,12 @@ router.post('/waiters/:username', authMiddleware.ensureLoggedIn, async (req, res
          req.flash('info', 'Please select at least one day from the list');
       }
 
-      if(user.usertype === 'admin') {
-         res.redirect(`/days`)
-      } else {
-         res.redirect(`/waiters/${req.params.username}`)
-      }  
+      // if(user.usertype === 'admin') {
+      //    res.redirect(`/days`)
+      // } else {
+      //    res.redirect(`/waiters/${req.params.username}`)
+      // }  
+      res.redirect(`/waiters/${req.params.username}`)
    }
    catch (error) {
       next(error);

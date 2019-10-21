@@ -69,7 +69,7 @@ router.post('/signup', async (req, res, next) => {
                // secure: true,
                signed: true
             });
-            req.flash('info', 'Successfully added new user');
+            // req.flash('info', 'Successfully added new user');
             res.redirect(`/waiters/${req.body.username}`);
          } else {
             req.flash('info', 'Email in use!');

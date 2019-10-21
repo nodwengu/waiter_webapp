@@ -3,7 +3,8 @@ DROP TABLE IF EXISTS waiters, weekdays, waiterdays;
 CREATE TABLE waiters(
     waiter_id SERIAL NOT NULL,
     username TEXT NOT NULL PRIMARY KEY,
-    userType TEXT NOT NULL DEFAULT 'waiter' 
+    password TEXT NOT NULL,
+    usertype TEXT NOT NULL DEFAULT 'waiter' 
 );
 
 CREATE TABLE weekdays(
