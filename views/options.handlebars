@@ -4,21 +4,20 @@
          {{messages}}
       </div>
       <div class="card" style="margin: 4rem 0 1rem 0;">
-         <button class="btn waves-effect waves-light left btn-flat" style="margin: 3% 0 3% 3%;"><a href="/waiters"
-               style="color: #000;">Back</a>
-            <i class="material-icons left">keyboard_backspace</i>
-         </button>
-          <button class="btn waves-effect waves-light right btn-flat" style="margin: 3% 3% 3% 0;"><a href="/"
-               style="color: #000;">Home</a>
+         <button class="btn waves-effect waves-light right btn-flat" style="margin: 3% 3% 3% 0;">
+            <a href="/" style="color: #000;">Home</a>
             <i class="material-icons left">home</i>
-         </button>
-         <div class="" style="padding: 1em 0 1.8em 0;">
-            <h3 class="center" style="margin: 5% 0 0 0;">Welcome: {{username}}</h3>
-         </div>
+         </button> 
+         <button class="btn waves-effect waves-light right btn-flat" style="margin: 3% 3% 3% 0;">
+            <a href="/auth/logout" style="color: #000;">Logout</a>
+            <i class="material-icons left"></i>
+         </button> 
+         
          <div class="card-content">
-            <div class="row">
+            <div class="row">            
                <div class="col s12 m12" style="">
-                  <h5 class="center" style="margin: 0% 0 0 0;">Select days you can work:</h5>
+                  <h4 class="center" style="margin: 3% 0 5% 0;">Welcome back: {{username}}</h4>
+                  <h5 class="center" style="margin: 0% 0 0 0;">Select days:</h5>
                   <form action="/waiters/{{username}}" method="POST">
                      <div style="display:flex; margin: 10% 0 5% 0; justify-content: space-evenly;font-size: 16px;">
                         {{#each days}}
@@ -42,6 +41,7 @@
                   <tr>
                     <th style="font-size: 1.4em;">Username</th>
                     <th style="font-size: 1.4em;" class="center">Working Days</th>
+                     {{!-- <th style="font-size: 1.4em;">Actions</th> --}}
                   </tr>
                 </thead>
 
@@ -53,6 +53,10 @@
                            <span class="list">{{day_name}}</span>
                         {{/each}}
                     </td>
+                     {{!-- <td class=""> 
+                        <a href="/waiters/{{username}}" class="waves-effect waves-light btn">
+                        <i class="material-icons left">add</i>Edit</a>
+                     </td> --}}
                   </tr>
                 </tbody>
               </table>

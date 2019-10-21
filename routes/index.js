@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
+const authMiddleware = require('../auth/middleware');
+
 const { Pool, Client } = require('pg');
 
 let useSSL = false;
@@ -21,72 +23,136 @@ const createWaiter = CreateWaiter(pool);
 
 router.get('/', async (req, res, next) => {
    try {
-      let daysList = await createWaiter.getAllDays();
-      createWaiter.updateCurrentDate();
-      res.render('index', {
-         days: daysList,
-         messages: req.flash('info')
-      });
+      let loggedin = false;
 
+      if(req.signedCookies.userName) {
+         loggedin = true;
+
+         let user = await createWaiter.getWaiterByUsername(req.signedCookies.userName);
+         if(user.usertype == 'admin') {
+            res.redirect(`/days`);
+         } 
+         else {
+            res.redirect(`/waiters/${req.signedCookies.userName}`);
+         }
+      } else {
+         res.render('home', {
+            waiterDays: await createWaiter.getAllWaiters(),
+            loggedin
+         });
+      }
+   
    } catch (error) {
       next(error);
    }
 });
 
-router.get('/day/:day_name', async (req, res, next) => {
-   res.render('day',{
-      day: req.params.day_name,
-      waiterDays: await createWaiter.getAllByDay(req.params.day_name),
-      available: await createWaiter.getAllAvailableWaiters(req.params.day_name),
-      messages: req.flash('info')
-   });
+router.get('/days', authMiddleware.ensureLoggedIn, async (req, res, next) => {
+   try {
+      if(req.signedCookies.userName) {
+         let user = await createWaiter.getWaiterByUsername(req.signedCookies.userName);
+         if(user.usertype === 'admin') {
+            res.render('index', {
+               days: await createWaiter.getAllDays(),
+               messages: req.flash('info')
+            })
+         } else {
+            res.redirect(`/waiters/${req.signedCookies.userName}`)
+         }
+      }
+   } catch (error) {
+      next(error);
+   }
 });
 
-router.get('/day/:day_name/delete/:username', async (req, res, next) => {
+router.get('/day/:day_name', authMiddleware.ensureLoggedIn, async (req, res, next) => {
    try {
-      let day = req.params.day_name;
-      let name = req.params.username;
+      if(req.signedCookies.userName) {
+         let user = await createWaiter.getWaiterByUsername(req.signedCookies.userName);
+         if(user.usertype === 'admin') {
+            res.render('day',{
+               day: req.params.day_name,
+               waiterDays: await createWaiter.getAllByDay(req.params.day_name),
+               available: await createWaiter.getAllAvailableWaiters(req.params.day_name),
+            });
+         } else {
+            res.redirect(`/waiters/${req.signedCookies.userName}`)
+         }
+      }
+   } 
+   catch (error) {
+      next(error);
+   }
+   
+});
 
-      await createWaiter.removeFromDay(day, name);
-      await createWaiter.reduceDayCounter({ day_name: day });
-      await createWaiter.setColor(day)
-
-      res.redirect(`/day/${day}`)
-
+router.get('/day/:day_name/delete/:username', authMiddleware.ensureLoggedIn, async (req, res, next) => {
+   try {
+      if(req.signedCookies.userName) {
+         let user = await createWaiter.getWaiterByUsername(req.signedCookies.userName);
+         if(user.usertype === 'admin') {
+            let day = req.params.day_name;
+            let name = req.params.username;
+      
+            await createWaiter.removeFromDay(day, name);
+            await createWaiter.reduceDayCounter({ day_name: day });
+            await createWaiter.setColor(day)
+         } else {
+            res.redirect(`/waiters/${req.signedCookies.userName}`)
+         }
+      }  
    } catch(error) {
       next(error)
    }
 });
 
-router.get('/waiters', async (req, res, next) => {
+//router.get('/waiters', authMiddleware.ensureLoggedIn, authMiddleware.allowAccess, async (req, res, next) => {
+router.get('/waiters',authMiddleware.ensureLoggedIn, async (req, res, next) => {
    try {
-      res.render('waiters', {
-         waiters: await createWaiter.getAllWaiters(),
-      });
+      if(req.signedCookies.userName) {
+         let user = await createWaiter.getWaiterByUsername(req.signedCookies.userName);
+         if(user.usertype === 'admin') {
+            res.render('waiters', {
+               waiters: await createWaiter.getAllWaiters(),
+               messages: req.flash('info')
+            });
+         } else {
+            res.redirect(`/waiters/${req.signedCookies.userName}`)
+         }
+      }
    } 
    catch(error) {
       next(error);
    }
 });
 
-router.get('/waiters/:username', async (req, res, next) => {
+router.get('/waiters/:username', authMiddleware.ensureLoggedIn, async (req, res, next) => {
    try {
-      let username = req.params.username;
-      res.render('options', {
-         username,
-         days: await createWaiter.getAllDays(),
-         waiters: await createWaiter.getAllWaiters(),
-         waiterDays: await createWaiter.getDaysByName(username),
-         messages: req.flash('info')
-      })
+      let user = await createWaiter.getWaiterByUsername(req.signedCookies.userName);
+      
+      if( (req.signedCookies.userName == req.params.username) ||  user.usertype === 'admin') {
+         if(user.usertype === 'admin' && (req.signedCookies.userName == req.params.username)) {
+            res.redirect('/days');
+         } else {
+            res.render('options', {
+               username: req.params.username,
+               days: await createWaiter.getAllDays(),
+               waiters: await createWaiter.getAllWaiters(),
+               waiterDays: await createWaiter.getDaysByName(req.params.username),
+               messages: req.flash('info')
+            })
+         }
+      }
 
    } catch (error) {
       next(error);
    }
 });
 
-router.post('/waiters/:username', async (req, res, next) => {
+router.post('/waiters/:username', authMiddleware.ensureLoggedIn, async (req, res, next) => {
    try {
+      let user = await createWaiter.getWaiterByUsername(req.signedCookies.userName);
+     
       let username = req.params.username;
       let days = await createWaiter.getAllDays();
       let waiterDays = await createWaiter.getDaysByName(username);
@@ -126,20 +192,27 @@ router.post('/waiters/:username', async (req, res, next) => {
          req.flash('info', 'Please select at least one day from the list');
       }
 
-      res.redirect(`/waiters/${req.params.username}`)
+      if(user.usertype === 'admin') {
+         res.redirect(`/days`)
+      } else {
+         res.redirect(`/waiters/${req.params.username}`)
+      }  
    }
    catch (error) {
       next(error);
    }
 });
 
-router.get('/delete', async (req, res, next) => {
+router.get('/delete',authMiddleware.ensureLoggedIn, async (req, res, next) => {
    try {
-      await createWaiter.deleteWaiterDays();
-      await createWaiter.resetAll();
-
+      if(req.signedCookies.userName) {
+         let user = await createWaiter.getWaiterByUsername(req.signedCookies.userName);
+         if(user.usertype === 'admin') {
+            await createWaiter.deleteWaiterDays();
+            await createWaiter.resetAll();
+         } 
+      }  
       res.redirect(`/`)
-
    } catch (error) {
       next(error);
    }

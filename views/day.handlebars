@@ -5,6 +5,10 @@
                style="color: #000;">Home</a>
             <i class="material-icons left">home</i>
          </button>
+         <button class="btn waves-effect waves-light right btn-flat" style="margin: 3% 3% 3% 0;">
+            <a href="/auth/logout" style="color: #000;">Logout</a>
+            <i class="material-icons left"></i>
+         </button> 
 
          <div class="card-content">
             <div class="row">
@@ -57,7 +61,7 @@
                                     <tbody>
                                        {{#each available}}
                                        <tr>
-                                          <td class=""> <a href="#">{{username}}</a></td>
+                                          <td class=""> <a href="/waiters/{{username}}">{{username}}</a></td>
                                           <td class="">
                                              <a href="/waiters/{{username}}" class="waves-effect waves-light btn">
                                                 <i class="material-icons left">add</i>Add</a>

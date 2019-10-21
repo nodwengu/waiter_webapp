@@ -24,6 +24,15 @@ module.exports = function CreateWaiter(pool) {
       return await pool.query(query, data);
    }
 
+   async function createUser(user) {
+      let data = [
+         user.username,
+         user.password
+      ]
+      let query = `INSERT INTO waiters(username, password) VALUES($1, $2)`;
+      return await pool.query(query, data);
+   }
+
    async function getAllWaiterDays() {
       let query = `SELECT * FROM waiterdays`;
       let results = await pool.query(query);
@@ -129,6 +138,7 @@ module.exports = function CreateWaiter(pool) {
    //Returns all waiters that are NOT working on a selected day
    async function getAllAvailableWaiters(theDay) {
       let query = `SELECT username FROM waiters
+                  WHERE usertype = 'waiter' 
                   EXCEPT 
                      SELECT username FROM waiterdays
                      WHERE day_name = '${theDay}' `;
@@ -152,6 +162,13 @@ module.exports = function CreateWaiter(pool) {
 
       return await pool.query(query);
    }
+
+   async function getWaiterByUsername(theName) {
+      let query = `SELECT * FROM waiters WHERE username = '${theName}'`;
+      let results = await pool.query(query);
+
+      return results.rows[0];
+   }
    
    return {
       getAllDays,
@@ -173,7 +190,10 @@ module.exports = function CreateWaiter(pool) {
       getAllByDay,
       getAllAvailableWaiters,
       removeFromDay,
-      reduceDayCounter
+      reduceDayCounter,
+      getWaiterByUsername,
+
+      createUser
 
       // getDaysByDayName,
    }
