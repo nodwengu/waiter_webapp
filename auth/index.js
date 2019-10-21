@@ -57,7 +57,7 @@ router.post('/signup', async (req, res, next) => {
             //We are now ready to send our user data to the database
             let user = {
                username: req.body.username,
-               password: has
+               password: hash
             };
 
             //Add new user to the database
