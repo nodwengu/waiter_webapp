@@ -97,6 +97,7 @@ router.get('/day/:day_name/delete/:username', authMiddleware.ensureLoggedIn, asy
             await createWaiter.removeFromDay(day, name);
             await createWaiter.reduceDayCounter({ day_name: day });
             await createWaiter.setColor(day);
+            res.redirect(`/day/${day}`);
          } else {
             res.redirect(`/waiters/${req.signedCookies.userName}`);
          }
