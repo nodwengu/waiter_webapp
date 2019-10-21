@@ -19,7 +19,7 @@ module.exports = function CreateWaiter(pool) {
       let data = [
          waiter.username,
          waiter.day_name,
-      ]
+      ];
       let query = `INSERT INTO waiterdays(username, day_name) VALUES($1, $2)`;
       return await pool.query(query, data);
    }
@@ -28,7 +28,7 @@ module.exports = function CreateWaiter(pool) {
       let data = [
          user.username,
          user.password
-      ]
+      ];
       let query = `INSERT INTO waiters(username, password) VALUES($1, $2)`;
       return await pool.query(query, data);
    }
@@ -69,9 +69,9 @@ module.exports = function CreateWaiter(pool) {
             if(day.days_counter === 3) {
                color = 'enough';
             } else if(day.days_counter < 3) {
-               color = 'less'
+               color = 'less';
             } else if(day.days_counter > 3) {
-               color = 'extra'
+               color = 'extra';
             }
          }
       }
@@ -116,7 +116,7 @@ module.exports = function CreateWaiter(pool) {
 
    async function isDayRepeated(name, theDay) {
       let isRepeated = false;
-      let userDays = await getDaysByName(name)
+      let userDays = await getDaysByName(name);
  
       for(let day of userDays) {
          if(day.day_name === theDay) {
@@ -196,5 +196,5 @@ module.exports = function CreateWaiter(pool) {
       createUser
 
       // getDaysByDayName,
-   }
-}
+   };
+};

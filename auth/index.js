@@ -23,7 +23,7 @@ const createWaiter = CreateWaiter(pool);
 function validUser(user) {
    let validUsername = typeof user.username === 'string' && user.username.trim() != '';
    let validPassword = typeof user.password === 'string' && user.password.trim() != '' && 
-                        user.password.trim().length >=6;
+                        user.password.trim().length >= 6;
 
    return validUsername && validPassword;
 }
@@ -57,8 +57,8 @@ router.post('/signup', async (req, res, next) => {
             //We are now ready to send our user data to the database
             let user = {
                username: req.body.username,
-               password: hash
-            }
+               password: has
+            };
 
             //Add new user to the database
             createWaiter.createUser(user);
@@ -78,7 +78,7 @@ router.post('/signup', async (req, res, next) => {
          req.flash('info', 'Invalid user');
       }
    } catch (error) {
-      next(error)
+      next(error);
    }
 });
 
@@ -118,12 +118,12 @@ router.post('/login', async (req, res, next) => {
                req.flash('info', 'Invalid login');
             }     
          } else {
-            req.flash('info', 'User does not exist')
+            req.flash('info', 'User does not exist');
          }
       } else {
          req.flash('info', 'Invalid login');
       }     
-      res.redirect('/auth/login')
+      res.redirect('/auth/login');
    } 
    catch(error) {
       next(error);
@@ -137,6 +137,6 @@ router.get('/logout', (req, res, next) => {
    } catch (error) {
       next(error);
    }
-})
+});
 
 module.exports = router;

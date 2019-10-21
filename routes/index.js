@@ -55,7 +55,7 @@ router.get('/days', authMiddleware.ensureLoggedIn, async (req, res, next) => {
             res.render('index', {
                days: await createWaiter.getAllDays(),
                messages: req.flash('info')
-            })
+            });
          } else {
             res.redirect(`/waiters/${req.signedCookies.userName}`)
          }
@@ -96,13 +96,13 @@ router.get('/day/:day_name/delete/:username', authMiddleware.ensureLoggedIn, asy
       
             await createWaiter.removeFromDay(day, name);
             await createWaiter.reduceDayCounter({ day_name: day });
-            await createWaiter.setColor(day)
+            await createWaiter.setColor(day);
          } else {
-            res.redirect(`/waiters/${req.signedCookies.userName}`)
+            res.redirect(`/waiters/${req.signedCookies.userName}`);
          }
       }  
    } catch(error) {
-      next(error)
+      next(error);
    }
 });
 
@@ -117,7 +117,7 @@ router.get('/waiters',authMiddleware.ensureLoggedIn, async (req, res, next) => {
                messages: req.flash('info')
             });
          } else {
-            res.redirect(`/waiters/${req.signedCookies.userName}`)
+            res.redirect(`/waiters/${req.signedCookies.userName}`);
          }
       }
    } 
@@ -140,7 +140,7 @@ router.get('/waiters/:username', authMiddleware.ensureLoggedIn, async (req, res,
                waiters: await createWaiter.getAllWaiters(),
                waiterDays: await createWaiter.getDaysByName(req.params.username),
                messages: req.flash('info')
-            })
+            });
          }
       }
 
@@ -171,13 +171,13 @@ router.post('/waiters/:username', authMiddleware.ensureLoggedIn, async (req, res
             let exit_loops = false;
             for (let day of days) {
                for (let selection of waiterSelections) {
-                  let isRepeated = await createWaiter.isDayRepeated(username, selection)    
+                  let isRepeated = await createWaiter.isDayRepeated(username, selection);    
                   if(!isRepeated) {
                      if (day.day_name === selection) {
                         if(day.days_counter < 3) { //Prevent from adding more than 3 waiters
                            await createWaiter.updateDayCounter({ day_name: day.day_name });
                            await createWaiter.setWaiterDays({ username, day_name: selection });
-                           await createWaiter.setColor(day.day_name)
+                           await createWaiter.setColor(day.day_name);
                         } else {   
                            exit_loops = true;
                            req.flash('info', `${day.day_name} has enough waiters...`);
@@ -197,7 +197,7 @@ router.post('/waiters/:username', authMiddleware.ensureLoggedIn, async (req, res
       // } else {
       //    res.redirect(`/waiters/${req.params.username}`)
       // }  
-      res.redirect(`/waiters/${req.params.username}`)
+      res.redirect(`/waiters/${req.params.username}`);
    }
    catch (error) {
       next(error);
@@ -213,7 +213,7 @@ router.get('/delete',authMiddleware.ensureLoggedIn, async (req, res, next) => {
             await createWaiter.resetAll();
          } 
       }  
-      res.redirect(`/`)
+      res.redirect(`/`);
    } catch (error) {
       next(error);
    }
