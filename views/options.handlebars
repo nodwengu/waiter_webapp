@@ -24,7 +24,9 @@
                         <label>
                            <input type="checkbox" class="filled-in" name="days" value="{{day_name}}"/>
                            <span style="font-size: 16px;">{{day_name}} ({{days_counter}})</span>
+                         
                         </label>
+                        
                         {{/each}}
 
                      </div>
@@ -35,32 +37,6 @@
                </div>
             </div>
 
-            <div style="margin: 8% 0 2% 0;">
-              <table class="highlight" style="    border: solid 1px #DCDBDC;">
-                <thead>
-                  <tr>
-                    <th style="font-size: 1.4em;">Username</th>
-                    <th style="font-size: 1.4em;" class="center">Working Days</th>
-                     {{!-- <th style="font-size: 1.4em;">Actions</th> --}}
-                  </tr>
-                </thead>
-
-                <tbody>
-                  <tr>
-                    <td class=""> {{username}}</td>
-                    <td class="waiterList">
-                        {{#each waiterDays}}
-                           <span class="list">{{day_name}}</span>
-                        {{/each}}
-                    </td>
-                     {{!-- <td class=""> 
-                        <a href="/waiters/{{username}}" class="waves-effect waves-light btn">
-                        <i class="material-icons left">add</i>Edit</a>
-                     </td> --}}
-                  </tr>
-                </tbody>
-              </table>
-            </div>
          </div>
       </div>
    </div>
