@@ -44,12 +44,18 @@ router.get('/signup', (req, res, next) => {
 
 router.post('/signup', async (req, res, next) => { 
    try {
-      if(validUser(req.body)) {
-         
+      if(validUser(req.body)) {  
          let user = await createWaiter.getWaiterByUsername(req.body.username);
-         
+       
          //If not found
          if(!user) {
+            //Setting the 'set-cookie header'
+            res.cookie('userName', req.body.username, {
+               httpOnly: true,
+               // secure: true,
+               signed: true
+            });
+            
             //This is a unique user
             //Hash the password
             let hash = await bcrypt.hash(req.body.password, 10);
@@ -63,12 +69,6 @@ router.post('/signup', async (req, res, next) => {
             //Add new user to the database
             createWaiter.createUser(user);
 
-            //Setting the 'set-cookie header'
-            res.cookie('userName', req.body.username, {
-               httpOnly: true,
-               // secure: true,
-               signed: true
-            });
             // req.flash('info', 'Successfully added new user');
             res.redirect(`/waiters/${req.body.username}`);
          } else {

@@ -57,7 +57,7 @@ router.get('/days', authMiddleware.ensureLoggedIn, async (req, res, next) => {
                messages: req.flash('info')
             });
          } else {
-            res.redirect(`/waiters/${req.signedCookies.userName}`)
+            res.redirect(`/waiters/${req.signedCookies.userName}`);
          }
       }
    } catch (error) {
@@ -76,7 +76,7 @@ router.get('/day/:day_name', authMiddleware.ensureLoggedIn, async (req, res, nex
                available: await createWaiter.getAllAvailableWaiters(req.params.day_name),
             });
          } else {
-            res.redirect(`/waiters/${req.signedCookies.userName}`)
+            res.redirect(`/waiters/${req.signedCookies.userName}`);
          }
       }
    } 
