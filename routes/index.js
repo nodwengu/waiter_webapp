@@ -266,30 +266,63 @@ router.post('/waiters/edit/:username', authMiddleware.ensureLoggedIn, async (req
       let user = await createWaiter.getWaiterByUsername(req.signedCookies.userName);
 
       if (req.signedCookies.userName) {
-         //console.log(req.body);
-      
+       
          let username = req.params.username;
          let days = await createWaiter.getAllDays();
          let waiterSelections;
 
-         if (typeof req.body.days === 'string') {
+         if (typeof waiterSelections === 'string') {
             waiterSelections = [req.body.days];
-         } else {
+         } else if(typeof waiterSelections === 'array') {
             waiterSelections = req.body.days;
+         } else {
+            waiterSelections = "";
          }
 
-         //for (let day of days) {
+         // if (typeof waiterSelections === 'string') {
+         //    waiterSelections = [req.body.days];
+         // } else {
+         //    waiterSelections = req.body.days;
+         // } 
+       
+
+         if (waiterSelections !== undefined) {
+            for (let day of days) {
+               for (let selection of waiterSelections) {
+                  //if(day.day_name == selection) {
+                     await createWaiter.updateWaiterDays({ username, day_name: day.day_name });
+                  //}
+                  
+               }
+            }
             
-         for (let selection of waiterSelections) {
-            // if(day.day_name == selection) {
-            // await createWaiter.decreaseDayCounter({ day_name: selection });
-            // console.log(selection);
             
-            // await createWaiter.setColor(selection);
-            // }
-            await createWaiter.updateWaiterDays({ username, day_name: selection });
-         }     
-         //}
+         } else {
+            console.log("undefined");
+            
+         }
+
+         
+      //    console.log(waiterSelections);
+
+      //    for (let day of days) {
+            
+      //    for (let selection of waiterSelections) {
+      //       if(day.day_name == selection) {
+      //       // await createWaiter.decreaseDayCounter({ day_name: selection });
+      //        console.log(selection);
+            
+      //       // await createWaiter.setColor(selection);
+
+      //       // await createWaiter.removeFromDay(selection, username);
+      //       // await createWaiter.reduceDayCounter({ day_name: selection });
+      //       // await createWaiter.setColor(selection);
+      //       // await createWaiter.updateWaiterDays({ username, day_name: selection });
+      //       }
+
+            
+      //    }     
+      //    }
       }
 
 
