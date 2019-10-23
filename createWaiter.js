@@ -24,6 +24,19 @@ module.exports = function CreateWaiter(pool) {
       return await pool.query(query, data);
    }
 
+   async function updateWaiterDays(waiter) {
+      let data = [
+         waiter.username,
+         waiter.day_name,
+      ];
+
+      let updateQuery = `UPDATE waiterdays
+        SET username = $1, day_name = $2
+        WHERE username = $1;
+      `;
+      return await pool.query(updateQuery, data);
+   }
+
    async function createUser(user) {
       let data = [
          user.username,
@@ -47,6 +60,14 @@ module.exports = function CreateWaiter(pool) {
       return await pool.query(query);
    }
 
+   async function decreaseDayCounter(day) {
+      let query = `UPDATE weekdays
+                  SET days_counter = days_counter - 1
+                  WHERE day_name = '${day.day_name}'`;
+
+      return await pool.query(query);
+   }
+
    async function getCounterByDayName(day_name) {
       let query = `SELECT days_counter FROM weekdays WHERE day_name = '${day_name}'`;
       let results = await pool.query(query);
@@ -64,13 +85,13 @@ module.exports = function CreateWaiter(pool) {
       let days = await getAllDays();
       let color = '';
 
-      for(let day of days) {
-         if(day.day_name == theDay) {
-            if(day.days_counter === 3) {
+      for (let day of days) {
+         if (day.day_name == theDay) {
+            if (day.days_counter === 3) {
                color = 'enough';
-            } else if(day.days_counter < 3) {
+            } else if (day.days_counter < 3) {
                color = 'less';
-            } else if(day.days_counter > 3) {
+            } else if (day.days_counter > 3) {
                color = 'extra';
             }
          }
@@ -92,7 +113,7 @@ module.exports = function CreateWaiter(pool) {
 
    //update counter and avail_status from weekday
    async function resetAll() {
-      let query = `UPDATE weekdays SET days_counter = 0, avail_status = 'less';`
+      let query = `UPDATE weekdays SET days_counter = 0, avail_status = 'less'`;
       return await pool.query(query);
    }
 
@@ -104,11 +125,11 @@ module.exports = function CreateWaiter(pool) {
    async function updateCurrentDate() {
       let daysList = await getAllDays();
 
-      for(let day of daysList) {
+      for (let day of daysList) {
          let myDate = new Date();
-         myDate.setDate( myDate.getDate() + (  day.curr_day - myDate.getDay() ) );
+         myDate.setDate(myDate.getDate() + (day.curr_day - myDate.getDay()));
          let curr_date = myDate.getDate();
-         
+
          //console.log(`Date: ${curr_date}`);
          await setDates(curr_date, day.day_name);
       }
@@ -117,9 +138,9 @@ module.exports = function CreateWaiter(pool) {
    async function isDayRepeated(name, theDay) {
       let isRepeated = false;
       let userDays = await getDaysByName(name);
- 
-      for(let day of userDays) {
-         if(day.day_name === theDay) {
+
+      for (let day of userDays) {
+         if (day.day_name === theDay) {
             isRepeated = true;
             break;
          }
@@ -169,7 +190,7 @@ module.exports = function CreateWaiter(pool) {
 
       return results.rows[0];
    }
-   
+
    return {
       getAllDays,
       getAllWaiters,
@@ -193,7 +214,9 @@ module.exports = function CreateWaiter(pool) {
       reduceDayCounter,
       getWaiterByUsername,
 
-      createUser
+      createUser,
+      updateWaiterDays,
+      decreaseDayCounter
 
       // getDaysByDayName,
    };

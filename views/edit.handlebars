@@ -17,26 +17,20 @@
             <div class="row">            
                <div class="col s12 m12" style="">
                   <h4 class="center" style="margin: 3% 0 5% 0;">Welcome back: {{username}}</h4>
-                  <h5 class="center" style="margin: 0% 0 0 0;">Select days:</h5>
-                  <form action="/waiters/{{username}}" method="POST">
+                  <h5 class="center" style="margin: 0% 0 0 0;">Update days:</h5>
+                  <form action="/waiters/edit/{{username}}" method="POST">
                      <div style="display:flex; margin: 10% 0 5% 0; justify-content: space-evenly;font-size: 16px;">
-                        {{#days}}
+                        {{#each days}}
                            <label>
-                              <input type="checkbox" class="filled-in" name="days"  value={{day_name}} {{checked}} >
-                              <span style="font-size: 16px;">{{day_name}}</span> 
+                              <input type="checkbox" class="filled-in" name="days" {{checked}} value="{{day_name}}"/>
+                              <span style="font-size: 16px;">{{day_name}}</span>
                            </label>
-                        {{/days}}
-                     </div>
-                      <div class="right" style="margin: 0 2% 0 4%;">
-                        <button class="btn waves-effect waves-light">
-                           <a href="/waiters/edit/{{username}}" style="color: #fff;">Edit</a>
-                           <i class="material-icons left">edit</i>
-                        </button>
+                        {{/each}}
+
                      </div>
                      <div class="right">
-                        <button class="btn waves-effect waves-light" type="submit">Submit</a></button>
+                        <button class="btn waves-effect waves-light" type="submit">Update</a></button>
                      </div>
-                     
                   </form>
                </div>
             </div>
