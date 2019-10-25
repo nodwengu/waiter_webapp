@@ -52,21 +52,7 @@ module.exports = function CreateWaiter(pool) {
       return results.rows;
    }
 
-   async function updateDayCounter(day) {
-      let query = `UPDATE weekdays
-                  SET days_counter = days_counter + 1
-                  WHERE day_name = '${day.day_name}'`;
-
-      return await pool.query(query);
-   }
-
-   async function decreaseDayCounter(day) {
-      let query = `UPDATE weekdays
-                  SET days_counter = days_counter - 1
-                  WHERE day_name = '${day.day_name}'`;
-
-      return await pool.query(query);
-   }
+   
 
    async function getCounterByDayName(day_name) {
       let query = `SELECT days_counter FROM weekdays WHERE day_name = '${day_name}'`;
@@ -176,6 +162,32 @@ module.exports = function CreateWaiter(pool) {
       return await pool.query(query);
    }
 
+   async function removeWaiterFrom(name) {
+      let query = `DELETE FROM waiterdays WHERE username = $1`;
+      return await pool.query(query, [name]);
+   }
+
+   async function updateCounter(day, value) {
+      let query = `UPDATE weekdays
+                  SET days_counter = '${value}'
+                  WHERE day_name = '${day}'`;
+
+      return await pool.query(query);
+   }
+
+   async function countWaiters(day) {
+      let query = `SELECT COUNT(*) FROM waiterdays WHERE day_name = $1`;
+      let results = await pool.query(query, [day]);
+      return results.rows[0].count;
+   }
+ 
+   async function getWaiterByUsername(theName) {
+      let query = `SELECT * FROM waiters WHERE username = '${theName}'`;
+      let results = await pool.query(query);
+
+      return results.rows[0];
+   }
+
    async function reduceDayCounter(day) {
       let query = `UPDATE weekdays
                   SET days_counter = days_counter - 1
@@ -184,20 +196,13 @@ module.exports = function CreateWaiter(pool) {
       return await pool.query(query);
    }
 
-   async function getWaiterByUsername(theName) {
-      let query = `SELECT * FROM waiters WHERE username = '${theName}'`;
-      let results = await pool.query(query);
-
-      return results.rows[0];
-   }
-
    return {
       getAllDays,
       getAllWaiters,
 
       setWaiterDays,
       getAllWaiterDays,
-      updateDayCounter,
+ 
       getCounterByDayName,
 
       setColor,
@@ -213,10 +218,12 @@ module.exports = function CreateWaiter(pool) {
       removeFromDay,
       reduceDayCounter,
       getWaiterByUsername,
+      updateCounter,
 
       createUser,
       updateWaiterDays,
-      decreaseDayCounter
+      removeWaiterFrom,
+      countWaiters
 
       // getDaysByDayName,
    };

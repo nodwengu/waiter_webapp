@@ -38,7 +38,7 @@ router.get('/', async (req, res, next) => {
       } else {
          res.render('home', {
             waiterDays: await createWaiter.getAllWaiters(),
-            loggedin
+            loggedin,
          });
       }
 
@@ -51,10 +51,13 @@ router.get('/days', authMiddleware.ensureLoggedIn, async (req, res, next) => {
    try {
       if (req.signedCookies.userName) {
          let user = await createWaiter.getWaiterByUsername(req.signedCookies.userName);
+         let days = await createWaiter.getAllDays(); 
+        
          if (user.usertype === 'admin') {
             res.render('index', {
-               days: await createWaiter.getAllDays(),
-               messages: req.flash('info')
+               days,
+               messages: req.flash('info'),
+              
             });
          } else {
             res.redirect(`/waiters/${req.signedCookies.userName}`);
@@ -139,6 +142,8 @@ router.get('/waiters/:username', authMiddleware.ensureLoggedIn, async (req, res,
       await days.forEach(day => {
          if(assignedDays.includes(day.day_name)) {
             day.checked = 'checked';
+         } else {
+            day.checked = 'undefined';
          }
       });
       // console.log({assignedDays, days});
@@ -163,12 +168,10 @@ router.get('/waiters/:username', authMiddleware.ensureLoggedIn, async (req, res,
 });
 
 router.post('/waiters/:username', authMiddleware.ensureLoggedIn, async (req, res, next) => {
-   try {
-      let user = await createWaiter.getWaiterByUsername(req.signedCookies.userName);
-
+   try {   
       let username = req.params.username;
       let days = await createWaiter.getAllDays();
-      let waiterDays = await createWaiter.getDaysByName(username);
+      
       let waiterSelections;
 
       if (typeof req.body.days === 'string') {
@@ -177,34 +180,50 @@ router.post('/waiters/:username', authMiddleware.ensureLoggedIn, async (req, res
          waiterSelections = req.body.days;
       }
 
-      if (waiterSelections !== undefined) {
-         // if (waiterSelections.length > 7 || waiterDays.length > 7) {
-         //    req.flash('info', 'MORE THAN 7 days');
-         // } else {
-         let exit_loops = false;
-         for (let day of days) {
-            for (let selection of waiterSelections) {
-               let isRepeated = await createWaiter.isDayRepeated(username, selection);
-               if (!isRepeated) {
-                  if (day.day_name === selection) {
-                     //if(day.days_counter < 3) { //Prevent from adding more than 3 waiters
-                     await createWaiter.updateDayCounter({ day_name: day.day_name });
-                     await createWaiter.setWaiterDays({ username, day_name: selection });
-                     await createWaiter.setColor(day.day_name);
-                     // } else {   
-                     //    exit_loops = true;
-                     //    req.flash('info', `${day.day_name} has enough waiters...`);
-                     // }
-                  }
-               }
-            }
-            if (exit_loops) { break; }
-         }
-         // }
-      } else {
-         req.flash('info', 'Please select at least one day from the list');
-      }
+      //Remove waiter from the table
+      await createWaiter.removeWaiterFrom(username);
 
+      for(let i = 0; i < days.length; i++) {
+         let day = days[i];
+
+         if(waiterSelections) {
+            for(let i = 0; i < waiterSelections.length; i++) {
+               let selection = waiterSelections[i];
+               
+               if(selection === day.day_name) {
+                  let isRepeated = await createWaiter.isDayRepeated(username, selection);
+
+                  if(!waiterSelections.includes(day.day_name)) {
+                     //delete before
+                     await createWaiter.removeFromDay(day.day_name, username);
+                     await createWaiter.updateWaiterDays( {username, day_name: day.day_name }); 
+                   
+                  } else {
+                     if(isRepeated) {
+                        await createWaiter.removeFromDay(day.day_name, username);
+                        await createWaiter.updateWaiterDays( {username, day_name: day.day_name }); 
+                     } else {
+                        //delete before
+                        await createWaiter.removeFromDay(day.day_name, username);
+                        await createWaiter.setWaiterDays( {username, day_name: day.day_name });
+                     }
+
+                  }
+               } 
+            }
+         } 
+         else {
+            await createWaiter.removeFromDay(day.day_name, username);
+         }
+      }
+      
+      for(let day of days) {
+         let value = await createWaiter.countWaiters(day.day_name);
+
+         await createWaiter.updateCounter(day.day_name, value);
+         await createWaiter.setColor(day.day_name);
+      }
+      
       res.redirect(`/waiters/${req.params.username}`);
    }
    catch (error) {
@@ -228,109 +247,5 @@ router.get('/delete', authMiddleware.ensureLoggedIn, async (req, res, next) => {
 
 });
 
-router.get('/waiters/edit/:username', authMiddleware.ensureLoggedIn, async (req, res, next) => {
-   try {
-      let user = await createWaiter.getWaiterByUsername(req.signedCookies.userName);
-      
-      let waiterDays = await createWaiter.getDaysByName(req.params.username);
-      let assignedDays  = waiterDays.map(day =>day.day_name);
-      let days = await createWaiter.getAllDays(); 
-
-      await days.forEach(day => {
-         if(assignedDays.includes(day.day_name)) {
-            day.checked = 'checked';
-         }
-      });
-      // console.log({assignedDays, days});
-      
-      if ((req.signedCookies.userName == req.params.username) || user.usertype === 'admin') {
-         if (user.usertype === 'admin' && (req.signedCookies.userName == req.params.username)) {
-            res.redirect('/days');
-         } else {
-            
-            res.render('edit', {
-               username: req.params.username,
-               days,
-               messages: req.flash('info'),
-            });
-         }
-      }
-
-   } catch (error) {
-      next(error);
-   }
-});
-
-router.post('/waiters/edit/:username', authMiddleware.ensureLoggedIn, async (req, res, next) => {
-   try {
-      let user = await createWaiter.getWaiterByUsername(req.signedCookies.userName);
-
-      if (req.signedCookies.userName) {
-       
-         let username = req.params.username;
-         let days = await createWaiter.getAllDays();
-         let waiterSelections;
-
-         if (typeof waiterSelections === 'string') {
-            waiterSelections = [req.body.days];
-         } else if(typeof waiterSelections === 'array') {
-            waiterSelections = req.body.days;
-         } else {
-            waiterSelections = "";
-         }
-
-         // if (typeof waiterSelections === 'string') {
-         //    waiterSelections = [req.body.days];
-         // } else {
-         //    waiterSelections = req.body.days;
-         // } 
-       
-
-         if (waiterSelections !== undefined) {
-            for (let day of days) {
-               for (let selection of waiterSelections) {
-                  //if(day.day_name == selection) {
-                     await createWaiter.updateWaiterDays({ username, day_name: day.day_name });
-                  //}
-                  
-               }
-            }
-            
-            
-         } else {
-            console.log("undefined");
-            
-         }
-
-         
-      //    console.log(waiterSelections);
-
-      //    for (let day of days) {
-            
-      //    for (let selection of waiterSelections) {
-      //       if(day.day_name == selection) {
-      //       // await createWaiter.decreaseDayCounter({ day_name: selection });
-      //        console.log(selection);
-            
-      //       // await createWaiter.setColor(selection);
-
-      //       // await createWaiter.removeFromDay(selection, username);
-      //       // await createWaiter.reduceDayCounter({ day_name: selection });
-      //       // await createWaiter.setColor(selection);
-      //       // await createWaiter.updateWaiterDays({ username, day_name: selection });
-      //       }
-
-            
-      //    }     
-      //    }
-      }
-
-
-      res.redirect(`/waiters/${req.params.username}`);
-
-   } catch (error) {
-      next(error);
-   }
-});
 
 module.exports = router;
